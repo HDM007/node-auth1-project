@@ -22,9 +22,15 @@ function restricted(req, res, next) {
     "message": "Username taken"
   }
 */
-function checkUsernameFree() {
+async function checkUsernameFree(req, res, next) {
+  const user = await User.findBy({username: req.body.username }).first();
 
-}
+  if (user && user.username) {
+    res.status(422).json({message: "Username taken"});
+  } else {
+    next();
+  }
+};
 
 /*
   If the username in req.body does NOT exist in the database
@@ -34,8 +40,14 @@ function checkUsernameFree() {
     "message": "Invalid credentials"
   }
 */
-function checkUsernameExists() {
+async function checkUsernameExists(req, res, next) {
+  const user = await User.findBy({username: req.body.username}).first();
 
+  if (user && user.username){
+    next();
+  } else {
+    res.status(401).json({message: "Invalid credentials"})
+  }
 }
 
 /*
